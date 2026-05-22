@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>AI Fraud Detection System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- =========================================
+                    HEADER
+    ========================================== -->
+    <header class="main-header">
+
+        <div class="header-overlay"></div>
+
+        <div class="header-content">
+
+            <h1>
+                AI RiskRadar
+            </h1>
+
+            <p>
+                AI-powered transaction, receipt & fraud intelligence platform
+            </p>
+
+        </div>
+
+    </header>
+
+    <!-- =========================================
+                    HERO STATS
+    ========================================== -->
+    <section class="hero-stats">
+
+        <div class="hero-card">
+            <div class="hero-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24"
+                    fill="none" stroke="white"
+                    stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12
+                            M17.66 17.66l2.12 2.12M2 12h3M19 12h3
+                            M4.22 19.78l2.12-2.12
+                            M17.66 6.34l2.12-2.12"/>
+                </svg>
+            </div>
+            <h3>AI Detection</h3>
+            <p>
+                Real-time fraud analysis powered by machine learning
+            </p>
+        </div>
+
+        <div class="hero-card">
+            <div class="hero-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24"
+                    fill="none" stroke="white"
+                    stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+            </div>
+
+            <h3>Instant Results</h3>
+            <p>
+                Detect suspicious transactions within seconds
+            </p>
+        </div>
+
+        <div class="hero-card">
+            <div class="hero-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24"
+                    fill="none" stroke="white"
+                    stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16
+                            a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                </svg>
+            </div>
+            <h3>Receipt Intelligence</h3>
+            <p>
+                Analyze screenshots and payment receipts using AI
+            </p>
+        </div>
+
+    </section>
+
+    <!-- =========================================
+                    DASHBOARD GRID
+    ========================================== -->
+    <main class="dashboard-grid">
+
+        <!-- =====================================
+                SECTION 1
+                TRANSACTION CHECK
+        ====================================== -->
+        <section class="card panel-card">
+
+            <div class="panel-header">
+                <div>
+                    <span class="panel-tag">
+                        TRANSACTION SECURITY
+                    </span>
+
+                    <h2>Transaction Detection</h2>
+
+                    <p class="panel-subtitle">
+                        Analyze transactions using AI fraud prediction
+                    </p>
+                </div>
+            </div>
+
+            <!-- INFO -->
+            <div class="info-banner">
+                <span>ℹ️</span>
+
+                <p>
+                    Enter transaction details in Indian Rupees (₹)
+                    to check fraud probability instantly
+                </p>
+            </div>
+
+            <!-- FORM CARD -->
+            <div id="formCard">
+
+                <div class="form-group">
+                    <label>Transaction Type</label>
+
+                    <select id="type">
+                        <option value="">Select Type</option>
+                        <option value="PAYMENT">Payment</option>
+                        <option value="TRANSFER">Transfer</option>
+                        <option value="CASH_OUT">Cash Out</option>
+                        <option value="CASH_IN">Cash In</option>
+                        <option value="DEBIT">Debit</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Transaction Amount</label>
+
+                    <div class="input-with-symbol">
+                        <span class="currency-symbol">₹</span>
+
+                        <input type="number"
+                               id="amount"
+                               placeholder="Enter amount"
+                               min="0"
+                               step="0.01"/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Transaction Hour</label>
+
+                    <input type="number"
+                           id="step"
+                           placeholder="Enter step (1-744)"
+                           min="1"
+                           max="744"/>
+
+                    <small>
+                        1 step = 1 hour (Maximum 744)
+                    </small>
+                </div>
+
+                <!-- Sender -->
+                <div class="section-title">
+                    Sender Account
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label>Balance Before</label>
+
+                        <div class="input-with-symbol">
+                            <span class="currency-symbol">₹</span>
+
+                            <input type="number"
+                                   id="oldbalanceOrg"
+                                   placeholder="Balance before"
+                                   min="0"
+                                   step="0.01"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Balance After</label>
+
+                        <div class="input-with-symbol">
+                            <span class="currency-symbol">₹</span>
+
+                            <input type="number"
+                                   id="newbalanceOrig"
+                                   placeholder="Balance after"
+                                   min="0"
+                                   step="0.01"/>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Receiver -->
+                <div class="section-title">
+                    Receiver Account
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label>Balance Before</label>
+
+                        <div class="input-with-symbol">
+                            <span class="currency-symbol">₹</span>
+
+                            <input type="number"
+                                   id="oldbalanceDest"
+                                   placeholder="Balance before"
+                                   min="0"
+                                   step="0.01"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Balance After</label>
+
+                        <div class="input-with-symbol">
+                            <span class="currency-symbol">₹</span>
+
+                            <input type="number"
+                                   id="newbalanceDest"
+                                   placeholder="Balance after"
+                                   min="0"
+                                   step="0.01"/>
+                        </div>
+                    </div>
+
+                </div>
+
+                <button id="checkBtn"
+                        onclick="checkTransaction()">
+                    🔍 Analyze Transaction
+                </button>
+
+            </div>
+
+            <!-- LOADING -->
+            <div class="loading-card"
+                 id="loadingCard"
+                 style="display:none">
+
+                <div class="spinner"></div>
+
+                <p>Analyzing transaction...</p>
+
+                <small>
+                    AI engine is detecting fraud patterns
+                </small>
+
+            </div>
+
+            <!-- RESULT -->
+            <div class="result-card print-section"
+                 id="resultCard"
+                 style="display:none">
+
+                <div class="result-badge"
+                     id="resultBadge"></div>
+
+                <div class="risk-level"
+                     id="riskLevel"></div>
+
+                <div class="confidence-section">
+
+                    <div class="confidence-header">
+                        <span>Fraud Probability</span>
+                        <span id="confidenceText"></span>
+                    </div>
+
+                    <div class="confidence-bar">
+                        <div class="confidence-fill"
+                             id="confidenceFill"></div>
+                    </div>
+
+                </div>
+
+                <div class="result-details">
+
+                    <h3>Transaction Summary</h3>
+
+                    <div class="detail-item">
+                        <span>Result</span>
+                        <span id="predictionLabel"></span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Transaction Type</span>
+                        <span id="typeLabel"></span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Amount</span>
+                        <span id="amountLabel"></span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Risk Level</span>
+                        <span id="riskLabel"></span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Confidence</span>
+                        <span id="confidenceLabel"></span>
+                    </div>
+
+                </div>
+
+                <!-- AI Explanation -->
+                <div class="ai-explanation"
+                     id="aiExplanation"
+                     style="display:none">
+
+                    <div class="ai-header">
+                        <span>🤖</span>
+                        <h3>AI Analysis</h3>
+                    </div>
+
+                    <p id="aiText"></p>
+
+                </div>
+
+                <!-- BUTTONS -->
+                <div class="button-group">
+
+                    <button class="btn-secondary"
+                            onclick="resetForm()">
+                        ← Reset
+                    </button>
+
+                    <button class="btn-copy"
+                            onclick="copyResult()">
+                        📋 Copy
+                    </button>
+
+                    <button class="btn-primary"
+                            onclick="printResult()">
+                        🖨️ Print
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- ERROR -->
+            <div class="error-card"
+                 id="errorCard"
+                 style="display:none">
+
+                <div class="error-icon">⚠️</div>
+
+                <h2>Something Went Wrong</h2>
+
+                <p id="errorMessage"></p>
+
+                <button onclick="resetForm()">
+                    Try Again
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- =====================================
+                SECTION 2
+                RECEIPT ANALYSIS
+        ====================================== -->
+        <section class="card panel-card">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-tag">
+                        RECEIPT INTELLIGENCE
+                    </span>
+
+                    <h2>Receipt Analysis</h2>
+
+                    <p class="panel-subtitle">
+                        Upload payment screenshots for AI verification
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- Receipt Card -->
+            <div id="receiptCard">
+
+                <div class="upload-area"
+                     id="uploadArea"
+                     onclick="document.getElementById('receiptInput').click()"
+                     ondragover="handleDragOver(event)"
+                     ondragleave="handleDragLeave(event)"
+                     ondrop="handleDrop(event)">
+
+                    <div class="upload-icon">📁</div>
+
+                    <p class="upload-text">
+                        Drop receipt here or click to upload
+                    </p>
+
+                    <small>
+                        JPG, PNG, WEBP — Max 5MB
+                    </small>
+
+                    <input type="file"
+                           id="receiptInput"
+                           accept="image/*"
+                           style="display:none"
+                           onchange="handleFileSelect(event)"/>
+
+                </div>
+
+                <!-- Preview -->
+                <div id="imagePreview"
+                     style="display:none">
+
+                    <img id="previewImg"
+                         src=""
+                         alt="Receipt Preview"/>
+
+                    <p id="fileName"></p>
+
+                    <button class="btn-remove"
+                            onclick="removeImage()">
+                        ✕ Remove
+                    </button>
+
+                </div>
+
+                <button id="analyzeBtn"
+                        onclick="analyzeReceipt()"
+                        disabled>
+
+                    🔍 Analyze Receipt
+
+                </button>
+
+            </div>
+
+            <!-- Receipt Loading -->
+            <div class="loading-card"
+                 id="receiptLoadingCard"
+                 style="display:none">
+
+                <div class="spinner"></div>
+
+                <p>Analyzing receipt...</p>
+
+                <small>
+                    Gemini AI is reading the image
+                </small>
+
+            </div>
+
+            <!-- Receipt Result -->
+            <div class="receipt-result-card"
+                 id="receiptResultCard"
+                 style="display:none">
+
+                <h2> Receipt Analysis</h2>
+
+                <div class="receipt-verdict"
+                     id="receiptVerdict"></div>
+
+                <div class="receipt-score-section">
+
+                    <div class="receipt-score-header">
+
+                        <span id="receiptScore">
+                            Risk Score: 0/100
+                        </span>
+
+                        <span id="receiptScoreText">
+                            0%
+                        </span>
+
+                    </div>
+
+                    <div class="receipt-score-bar">
+
+                        <div class="receipt-score-fill low"
+                             id="receiptScoreFill"
+                             style="width:0%"></div>
+
+                    </div>
+
+                </div>
+
+                <!-- Extracted -->
+                <div class="extracted-section">
+
+                    <h3>Extracted Details</h3>
+
+                    <div class="extracted-grid">
+
+                        <div class="extracted-item">
+                            <span class="extracted-label">Amount</span>
+                            <span class="extracted-value"
+                                  id="extractedAmount">—</span>
+                        </div>
+
+                        <div class="extracted-item">
+                            <span class="extracted-label">Document Type</span>
+                            <span class="extracted-value"
+                                  id="extractedType">—</span>
+                        </div>
+
+                        <div class="extracted-item">
+                            <span class="extracted-label">Vendor</span>
+                            <span class="extracted-value"
+                                  id="extractedVendor">—</span>
+                        </div>
+
+                        <div class="extracted-item">
+                            <span class="extracted-label">Date</span>
+                            <span class="extracted-value"
+                                  id="extractedDate">—</span>
+                        </div>
+
+                        <div class="extracted-item">
+                            <span class="extracted-label">Time</span>
+                            <span class="extracted-value"
+                                  id="extractedTime">—</span>
+                        </div>
+
+                        <div class="extracted-item">
+                            <span class="extracted-label">Platform</span>
+                            <span class="extracted-value"
+                                  id="extractedPlatform">—</span>
+                        </div>
+
+                        <div class="extracted-item">
+                            <span class="extracted-label">Transaction ID</span>
+                            <span class="extracted-value"
+                                  id="extractedTxnId">—</span>
+                        </div>
+
+                        <div class="extracted-item">
+                            <span class="extracted-label">Image Quality</span>
+                            <span class="extracted-value"
+                                  id="extractedQuality">—</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Signals -->
+                <div class="signals-section"
+                     id="signalsSection"
+                     style="display:none">
+
+                    <h3>⚠️ Detected Signals</h3>
+
+                    <ul class="signals-list"
+                        id="receiptSignals"></ul>
+
+                </div>
+
+                <!-- AI -->
+                <div class="receipt-analysis-section">
+
+                    <h3>🤖 AI Explanation</h3>
+
+                    <p class="receipt-analysis"
+                       id="receiptAnalysis"></p>
+
+                </div>
+
+                <div class="receipt-btn-row">
+
+                    <button class="btn-secondary"
+                            onclick="resetReceipt()">
+
+                        ← Analyze Another
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- Receipt Error -->
+            <div class="error-card"
+                 id="receiptErrorCard"
+                 style="display:none">
+
+                <div class="error-icon">⚠️</div>
+
+                <h2>Analysis Failed</h2>
+
+                <p id="receiptErrorMessage"></p>
+
+                <button onclick="resetReceipt()">
+                    Try Again
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- =====================================
+                SECTION 3
+                CHATBOT
+        ====================================== -->
+        <section class="card panel-card">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-tag">
+                        AI FRAUD ASSISTANT
+                    </span>
+
+                    <h2>Fraud Awareness Chatbot</h2>
+
+                    <p class="panel-subtitle">
+                        Ask fraud, scam & cybersecurity related questions
+                    </p>
+
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div id="chatMessages"
+                 class="chat-messages">
+
+                <div class="bot-message">
+
+                    Hello 👋
+
+                    <br><br>
+
+                    I can help you with:
+
+                    <ul>
+                        <li>UPI fraud</li>
+                        <li>Phishing scams</li>
+                        <li>Fake payment screenshots</li>
+                        <li>Transaction fraud</li>
+                        <li>Cyber fraud prevention</li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+            <!-- Input -->
+            <div class="chat-input-area">
+
+                <input type="text"
+                       id="chatInput"
+                       placeholder="Ask fraud-related questions..."
+                       onkeydown="handleChatEnter(event)">
+
+                <button onclick="sendMessage()">
+                    Send
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- =====================================
+                SECTION 4
+                BATCH ANALYSIS
+        ====================================== -->
+        <section class="card panel-card">
+
+            <div class="panel-header">
+
+                <div>
+
+                    <span class="panel-tag">
+                        BULK FRAUD ANALYSIS
+                    </span>
+
+                    <h2>Batch Transaction Check</h2>
+
+                    <p class="panel-subtitle">
+                        Upload CSV files and analyze multiple transactions
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- Batch Card -->
+            <div id="batchCard">
+
+                <div class="batch-steps">
+
+                    <!-- Step 1 -->
+                    <div class="batch-step">
+
+                        <div class="step-number">1</div>
+
+                        <div class="step-content">
+
+                            <p>
+                                Download CSV template
+                            </p>
+
+                            <button class="btn-template"
+                                    onclick="downloadTemplate()">
+
+                                ⬇️ Download Template
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="batch-step">
+
+                        <div class="step-number">2</div>
+
+                        <div class="step-content">
+
+                            <p>
+                                Fill your transactions
+                            </p>
+
+                            <small>
+                                Use the required columns
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="batch-step">
+
+                        <div class="step-number">3</div>
+
+                        <div class="step-content">
+
+                            <p>
+                                Upload CSV file
+                            </p>
+
+                            <div class="batch-upload-area"
+                                 id="batchUploadArea"
+                                 onclick="document.getElementById('csvInput').click()">
+
+                                <span>📁</span>
+
+                                <p>Click to upload CSV</p>
+
+                                <small>Maximum 1000 rows</small>
+
+                                <input type="file"
+                                       id="csvInput"
+                                       accept=".csv"
+                                       style="display:none"
+                                       onchange="handleCSVSelect(event)"/>
+
+                            </div>
+
+                            <div id="csvFileName"
+                                 style="display:none"
+                                 class="csv-file-name">
+
+                                <span id="csvFileNameText"></span>
+
+                                <button onclick="removeCSV()">
+                                    ✕
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Required -->
+                <div class="columns-info">
+
+                    <p>Required columns:</p>
+
+                    <div class="column-tags">
+
+                        <span class="column-tag">type</span>
+                        <span class="column-tag">amount</span>
+                        <span class="column-tag">step</span>
+                        <span class="column-tag">oldbalanceOrg</span>
+                        <span class="column-tag">newbalanceOrig</span>
+                        <span class="column-tag">oldbalanceDest</span>
+                        <span class="column-tag">newbalanceDest</span>
+
+                    </div>
+
+                </div>
+
+                <button id="processBatchBtn"
+                        onclick="processBatch()"
+                        disabled>
+
+                    🔍 Process Transactions
+
+                </button>
+
+            </div>
+
+            <!-- Batch Loading -->
+            <div class="loading-card"
+                 id="batchLoadingCard"
+                 style="display:none">
+
+                <div class="spinner"></div>
+
+                <p>Processing transactions...</p>
+
+                <small>
+                    AI engine is analyzing batch data
+                </small>
+
+            </div>
+
+            <!-- Batch Results -->
+            <div class="batch-result-card"
+                 id="batchResultCard"
+                 style="display:none">
+
+                <h2>📊 Batch Results</h2>
+
+                <!-- Summary -->
+                <div class="batch-summary">
+
+                    <div class="summary-item total">
+                        <span class="summary-number"
+                              id="totalProcessed">0</span>
+
+                        <span class="summary-label">
+                            Total
+                        </span>
+                    </div>
+
+                    <div class="summary-item fraud">
+                        <span class="summary-number"
+                              id="totalFraud">0</span>
+
+                        <span class="summary-label">
+                            High Risk
+                        </span>
+                    </div>
+
+                    <div class="summary-item legit">
+                        <span class="summary-number"
+                              id="totalLegit">0</span>
+
+                        <span class="summary-label">
+                            Low Risk
+                        </span>
+                    </div>
+
+                    <div class="summary-item percentage">
+                        <span class="summary-number"
+                              id="fraudPercentage">0%</span>
+
+                        <span class="summary-label">
+                            Risk %
+                        </span>
+                    </div>
+
+                </div>
+
+                <!-- AI -->
+                <div class="batch-explanation"
+                     id="batchExplanation"
+                     style="display:none">
+
+                    <div class="ai-header">
+                        <span>🤖</span>
+                        <h3>AI Analysis</h3>
+                    </div>
+
+                    <p id="batchExplanationText"></p>
+
+                </div>
+
+                <!-- Table -->
+                <div class="table-container">
+
+                    <table class="results-table">
+
+                        <thead>
+                            <tr>
+                                <th>Row</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Confidence</th>
+                                <th>Risk</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="resultsTableBody"></tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- Errors -->
+                <div id="errorsSection"
+                     style="display:none">
+
+                    <h3 class="errors-heading">
+                        ⚠️ Rows with Errors
+                    </h3>
+
+                    <ul id="errorsList"
+                        class="errors-list"></ul>
+
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+
+                    <button class="btn-secondary"
+                            onclick="resetBatch()">
+
+                        ← Reset
+
+                    </button>
+
+                    <button class="btn-download"
+                            onclick="downloadResults()">
+
+                        ⬇️ Download Results
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- Batch Error -->
+            <div class="error-card"
+                 id="batchErrorCard"
+                 style="display:none">
+
+                <div class="error-icon">⚠️</div>
+
+                <h2>Upload Failed</h2>
+
+                <p id="batchErrorMessage"></p>
+
+                <button onclick="resetBatch()">
+                    Try Again
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- =========================================
+                    FOOTER
+    ========================================== -->
+    <footer>
+
+        <p>
+            🔒 Fraud Detection System — Powered by AI & XGBoost
+        </p>
+
+        <p>
+            Built for intelligent fraud prevention & cybersecurity awareness
+        </p>
+
+    </footer>
+
+    <!-- =========================================
+                    JS FILES
+    ========================================== -->
+    <script src="{{ url_for('static',
+            filename='js/script.js') }}"></script>
+
+    <script src="{{ url_for('static',
+            filename='js/receipt.js') }}"></script>
+
+    <script src="{{ url_for('static',
+            filename='js/batch.js') }}"></script>
+
+    <script src="{{ url_for('static',
+            filename='js/chatbot.js') }}"></script>
+
+</body>
+</html>
