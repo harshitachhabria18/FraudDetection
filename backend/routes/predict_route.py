@@ -8,10 +8,10 @@ from backend.utils.explainer import explain_prediction
 # CHANGED — Import from config 
 # ================================
 from backend.config import (
-    inr_to_usd,                             
-    FRAUD_THRESHOLD,                        
-    HIGH_RISK_THRESHOLD,                    
-    MEDIUM_RISK_THRESHOLD                   
+    inr_to_usd,
+    FRAUD_THRESHOLD,
+    HIGH_RISK_THRESHOLD,
+    MEDIUM_RISK_THRESHOLD
 )
 
 # Create blueprint
@@ -30,10 +30,6 @@ def predict():
 
         # Extract fields from request
         transaction_type   = data.get('type')
-
-        # ================================
-        # CHANGED — All amounts in INR 
-        # ================================
         amount_inr         = data.get('amount')        
         oldbalanceOrg_inr  = data.get('oldbalanceOrg') 
         newbalanceOrig_inr = data.get('newbalanceOrig')
@@ -53,6 +49,9 @@ def predict():
         # Validate transaction type
         valid_types = ['CASH_IN', 'CASH_OUT',
                        'DEBIT', 'PAYMENT', 'TRANSFER']
+        
+        model_types     = ['CASH_OUT', 'TRANSFER']
+        
         if transaction_type not in valid_types:
             return jsonify({
                 'error': f'Invalid transaction type'
@@ -86,85 +85,165 @@ def predict():
                 'error': 'Step must be greater than 0'
             }), 400
 
-        # ================================
-        # NEW — Convert INR to USD 
-        # ================================
-        amount         = inr_to_usd(amount_inr)         
-        oldbalanceOrg  = inr_to_usd(oldbalanceOrg_inr)  
-        newbalanceOrig = inr_to_usd(newbalanceOrig_inr) 
-        oldbalanceDest = inr_to_usd(oldbalanceDest_inr) 
-        newbalanceDest = inr_to_usd(newbalanceDest_inr) 
+        # ================================================================
+        # RULE 1: CASH_IN, DEBIT, PAYMENT — never fraud in PaySim
+        # Return LEGITIMATE immediately without calling model
+        # ================================================================
+        if transaction_type not in model_types:
+            return jsonify({
+                'prediction'      : 0,
+                'label'           : 'LEGITIMATE',
+                'confidence'      : 1.0,
+                'risk_level'      : 'LOW',
+                'threshold_used'  : FRAUD_THRESHOLD,
+                'transaction_type': transaction_type,
+                'amount_inr'      : round(amount_inr, 2),
+                'amount_usd'      : round(inr_to_usd(amount_inr), 2),
+                'step'            : step,
+                'ai_explanation'  : (
+                    f'{transaction_type} transactions are not associated '
+                    f'with fraud. No suspicious activity detected.'
+                )
+            }), 200
 
-        # Build input dictionary
+        # ================================================================
+        # RULE 2: Balance reconciliation check
+        # If both sender and receiver balances add up correctly
+        # the transaction is mathematically legitimate
+        #
+        # Legitimate: (oldbalanceOrg - amount) = newbalanceOrig
+        #             (oldbalanceDest + amount) = newbalanceDest
+        #
+        # This rule catches small legitimate transfers that PaySim's
+        # training data doesn't represent well (e.g. ₹1,000 transfers)
+        # ================================================================
+        tolerance          = 1.0  # ₹1 rounding tolerance
+        balance_check_orig = abs((oldbalanceOrg_inr - amount_inr) - newbalanceOrig_inr)
+        balance_check_dest = abs((newbalanceDest_inr - oldbalanceDest_inr) - amount_inr)
+ 
+        if balance_check_orig <= tolerance and balance_check_dest <= tolerance:
+            ai_explanation = explain_prediction(
+                prediction       = 'LEGITIMATE',
+                confidence       = 1.0,
+                risk_level       = 'LOW',
+                transaction_type = transaction_type,
+                amount_inr       = amount_inr,
+                step             = step,
+                oldbalanceOrg    = oldbalanceOrg_inr,
+                newbalanceOrig   = newbalanceOrig_inr,
+                oldbalanceDest   = oldbalanceDest_inr,
+                newbalanceDest   = newbalanceDest_inr
+            )
+            return jsonify({
+                'prediction'      : 0,
+                'label'           : 'LEGITIMATE',
+                'confidence'      : 1.0,
+                'risk_level'      : 'LOW',
+                'threshold_used'  : FRAUD_THRESHOLD,
+                'transaction_type': transaction_type,
+                'amount_inr'      : round(amount_inr, 2),
+                'amount_usd'      : round(inr_to_usd(amount_inr), 2),
+                'step'            : step,
+                'ai_explanation'  : ai_explanation['explanation']
+            }), 200
+            
+              
+        # ================================================================
+        # RULE 3: PaySim fraud signature
+        # Sender fully drained + amount equals balance + receiver unchanged
+        # This is the exact fraud pattern in PaySim that the ML model
+        # misses due to low confidence (26%) on TRANSFER fraud
+        # ================================================================
+        sender_drained     = newbalanceOrig_inr == 0
+        amount_equals_bal  = abs(amount_inr - oldbalanceOrg_inr) <= tolerance
+        receiver_unchanged = abs(newbalanceDest_inr - oldbalanceDest_inr) <= tolerance
+        receiver_both_zero  = oldbalanceDest_inr == 0 and newbalanceDest_inr == 0
+ 
+        if sender_drained and amount_equals_bal and receiver_unchanged and not receiver_both_zero:
+            ai_explanation = explain_prediction(
+                prediction       = 'FRAUD',
+                confidence       = 95.0,
+                risk_level       = 'HIGH',
+                transaction_type = transaction_type,
+                amount_inr       = amount_inr,
+                step             = step,
+                oldbalanceOrg    = oldbalanceOrg_inr,
+                newbalanceOrig   = newbalanceOrig_inr,
+                oldbalanceDest   = oldbalanceDest_inr,
+                newbalanceDest   = newbalanceDest_inr
+            )
+            return jsonify({
+                'prediction'      : 1,
+                'label'           : 'FRAUD',
+                'confidence'      : 95.0,
+                'risk_level'      : 'HIGH',
+                'threshold_used'  : FRAUD_THRESHOLD,
+                'transaction_type': transaction_type,
+                'amount_inr'      : round(amount_inr, 2),
+                'amount_usd'      : round(inr_to_usd(amount_inr), 2),
+                'step'            : step,
+                'ai_explanation'  : ai_explanation['explanation']
+            }), 200
+
+
+
+        # ================================================================
+        # ML MODEL: Balances don't reconcile → suspicious
+        # Send to XGBoost for fraud probability scoring
+        # This handles cases where:
+        # → Sender balance didn't decrease correctly
+        # → Receiver balance didn't increase correctly
+        # → Amount doesn't match balance changes
+        # ================================================================
         input_data = {
             'step'          : step,
-            'amount'        : amount,          
-            'oldbalanceOrg' : oldbalanceOrg,   
-            'newbalanceOrig': newbalanceOrig,  
-            'oldbalanceDest': oldbalanceDest,
-            'newbalanceDest': newbalanceDest,  
-            'type_CASH_IN'  : 1 if transaction_type == 'CASH_IN'  else 0,
-            'type_CASH_OUT' : 1 if transaction_type == 'CASH_OUT'  else 0,
-            'type_DEBIT'    : 1 if transaction_type == 'DEBIT'     else 0,
-            'type_PAYMENT'  : 1 if transaction_type == 'PAYMENT'   else 0,
-            'type_TRANSFER' : 1 if transaction_type == 'TRANSFER'  else 0,
+            'amount'        : amount_inr,
+            'oldbalanceOrg' : oldbalanceOrg_inr,
+            'newbalanceOrig': newbalanceOrig_inr,
+            'oldbalanceDest': oldbalanceDest_inr,
+            'newbalanceDest': newbalanceDest_inr,
+            'type_CASH_OUT' : 1 if transaction_type == 'CASH_OUT' else 0,
+            'type_TRANSFER' : 1 if transaction_type == 'TRANSFER' else 0,
         }
-
-        # Convert to dataframe
-        input_df = pd.DataFrame([input_data])[feature_columns]
-
-        # Get fraud probability
+ 
+        input_df    = pd.DataFrame([input_data])[feature_columns]
         probability = model.predict_proba(input_df)[0][1]
-
-        # ================================
-        # CHANGED — Use config values 
-        # ================================
-        prediction = int(probability >= FRAUD_THRESHOLD)  
-
-        # ================================
-        # CHANGED — Use config thresholds 
-        # ================================
-        if probability >= HIGH_RISK_THRESHOLD:            
+        prediction  = int(probability >= FRAUD_THRESHOLD)
+ 
+        if probability >= HIGH_RISK_THRESHOLD:
             risk_level = 'HIGH'
-        elif probability >= MEDIUM_RISK_THRESHOLD:        
+        elif probability >= MEDIUM_RISK_THRESHOLD:
             risk_level = 'MEDIUM'
         else:
             risk_level = 'LOW'
-            
+ 
         label = 'FRAUD' if prediction == 1 else 'LEGITIMATE'
-        
+ 
         ai_explanation = explain_prediction(
-            prediction      = label,
-            confidence      = round(float(probability) * 100, 2),
-            risk_level      = risk_level,
-            transaction_type= transaction_type,
-            amount_inr      = amount_inr,
-            step            = step,
-            oldbalanceOrg   = oldbalanceOrg_inr,
-            newbalanceOrig  = newbalanceOrig_inr,
-            oldbalanceDest  = oldbalanceDest_inr,
-            newbalanceDest  = newbalanceDest_inr
+            prediction       = label,
+            confidence       = round(float(probability) * 100, 2),
+            risk_level       = risk_level,
+            transaction_type = transaction_type,
+            amount_inr       = amount_inr,
+            step             = step,
+            oldbalanceOrg    = oldbalanceOrg_inr,
+            newbalanceOrig   = newbalanceOrig_inr,
+            oldbalanceDest   = oldbalanceDest_inr,
+            newbalanceDest   = newbalanceDest_inr
         )
-
-        # ================================
-        # CHANGED — Return INR amounts 
-        # ================================
-        result = {
+        
+        return jsonify({
             'prediction'      : prediction,
             'label'           : label,
             'confidence'      : round(float(probability) * 100, 2),
             'risk_level'      : risk_level,
             'threshold_used'  : FRAUD_THRESHOLD,
             'transaction_type': transaction_type,
-            'amount_inr'      : round(amount_inr, 2),     
-            'amount_usd'      : round(amount, 2),          
+            'amount_inr'      : round(amount_inr, 2),
+            'amount_usd'      : round(inr_to_usd(amount_inr), 2),
             'step'            : step,
             'ai_explanation'  : ai_explanation['explanation']
-        }
-
-        return jsonify(result), 200
-
+        }), 200
+ 
     except Exception as e:
-        return jsonify({
-            'error': str(e)
-        }), 500
+        return jsonify({'error': str(e)}), 500

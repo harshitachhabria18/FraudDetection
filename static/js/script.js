@@ -148,21 +148,26 @@ function showResult(data) {
     }
 
     // ==================
-    // Set Confidence Bar
-    // ==================
-    const confidence = data.confidence
-    const fill       = document.getElementById('confidenceFill')
+// Set Confidence Bar
+// ==================
+const confidence        = data.confidence
+const fill              = document.getElementById('confidenceFill')
 
-    document.getElementById('confidenceText').textContent =
-        `${confidence}%`
+// For legitimate transactions show 0% on bar
+// Backend sends 1% for legitimate (needed for AI analysis)
+// Frontend displays 0% so user sees clean result
+const displayConfidence = isFraud ? confidence : 0
 
-    // Animate bar after small delay
-    setTimeout(() => {
-        fill.style.width = confidence + '%'
-        fill.className   = isFraud
-            ? 'confidence-fill fill-fraud'
-            : 'confidence-fill fill-legit'
-    }, 100)
+document.getElementById('confidenceText').textContent =
+    `${displayConfidence}%`
+
+// Animate bar after small delay
+setTimeout(() => {
+    fill.style.width = displayConfidence + '%'
+    fill.className   = isFraud
+        ? 'confidence-fill fill-fraud'
+        : 'confidence-fill fill-legit'
+}, 100)
 
     const aiText = document.getElementById('aiText')
     if (data.ai_explanation) {
@@ -202,7 +207,7 @@ function showResult(data) {
         risk === 'MEDIUM' ? '#c05621' : '#276749'
 
     document.getElementById('confidenceLabel').textContent =
-        `${confidence}%`
+    `${displayConfidence}%`
 
     // ==================
     // Scroll to Result

@@ -42,13 +42,12 @@ def explain_prediction(
         - Receiver Balance After: ₹{newbalanceDest:,.2f}
 
         Model Prediction: {prediction}
-        Confidence: {confidence}%
         Risk Level: {risk_level}
 
         Instructions:
-        1. Explain in 3-4 sentences why this transaction
-           was flagged as {prediction}
-        2. Mention specific suspicious patterns you see
+        1. Explain in 3-4 sentences the reason for this prediction
+        2. If LEGITIMATE: explain why transaction is safe and reassure customer
+        If FRAUD: mention specific suspicious patterns found
         3. Give a clear recommendation
         4. Keep language simple and friendly
         5. Do not use technical ML terms
