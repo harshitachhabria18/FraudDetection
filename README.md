@@ -8,3 +8,17 @@
 
 **AI-powered platform to detect risk of potentially fraudulent financial transactions**
 
+---
+
+## 🔗 Live Demo
+[https://ai-riskradar.onrender.com/](https://ai-riskradar.onrender.com/)
+
+---
+
+## 📌 About The Project
+AI RiskRadar is an end-to-end AI-powered fraud detection platform built for Indian financial transactions. It combines a trained XGBoost machine learning model with rule-based logic and large language model (LLM) explanations to detect suspicious transactions in real time.
+
+The platform goes beyond simple fraud detection — it includes receipt verification using Google Gemini AI, a fraud awareness chatbot powered by LLaMA 3, and bulk CSV transaction analysis, making it a complete fraud intelligence system.
+
+### Why this project
+Financial fraud costs Indian consumers thousands of crores every year. Most fraud detection tools are either too technical for everyday users or too simplistic to catch real patterns. AI RiskRadar bridges this gap by providing instant, explainable fraud analysis in plain language — no technical knowledge required.
