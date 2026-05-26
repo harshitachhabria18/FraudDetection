@@ -72,3 +72,103 @@ Financial fraud costs Indian consumers thousands of crores every year. Most frau
 | CSS3 | Styling and glassmorphism UI |
 | Vanilla JavaScript | Client-side interactivity |
 | Fetch API | Frontend-backend communication |
+
+---
+
+## 🧠 Machine Learning Model 
+### Dataset — PaySim
+| Property | Value |
+|---|---|
+| Source | [PaySim — Kaggle](https://www.kaggle.com/datasets/ealaxi/paysim1) |
+| Total transactions | 6,362,620 |
+| Fraud cases | 8,213 (0.13%) |
+| Filtered dataset | 2,770,409 (TRANSFER + CASH_OUT only) |
+| Training scale | INR (×96.31 conversion applied) |
+
+### Why PaySim?
+- Human-readable financial features without hidden PCA transformations
+- Simulates realistic mobile money transactions
+- Suitable for fraud behavior analysis and explainable predictions
+- Allows users to enter meaningful transaction details such as balances and amounts
+
+### Preprocessing
+- Filtered to **TRANSFER** and **CASH_OUT** transaction types
+- Converted monetary values to INR (₹) before training
+- Handled class imbalance using `scale_pos_weight = 336`
+- Stratified 80/20 train-test split
+
+### Model Comparison
+| Model | Recall | Precision | F1 | ROC-AUC |
+|---|---|---|---|---|
+| Logistic Regression | 0.97 | 0.02 | 0.05 | 0.97 |
+| Decision Tree | 0.84 | 0.88 | 0.86 | 0.92 |
+| Random Forest | 0.77 | 0.98 | 0.86 | 0.99 |
+| **XGBoost** ✅ | **0.89** | **0.93** | **0.91** | **0.9988** |
+
+> XGBoost was selected as the final model because it achieved the best balance between fraud detection recall and prediction precision while maintaining an exceptionally high ROC-AUC score.
+
+### Final Model Performance
+| Metric | Score |
+|---|---|
+| Algorithm | XGBoost Classifier |
+| Estimators | 200 |
+| Precision | 0.93 |
+| Recall | 0.89 |
+| F1 Score | 0.91 |
+| ROC-AUC | 0.9988 |
+| scale_pos_weight | 336 |
+
+---
+
+## 📁 Project Structure
+```
+AI-RiskRadar/
+│
+├── backend/
+│   ├── __init__.py
+│   ├── app.py                  ← Flask application entry point
+│   ├── config.py               ← Constants & currency config
+│   │
+│   ├── routes/
+│   │   ├── __init__.py
+│   │   ├── predict_route.py    ← /predict endpoint
+│   │   ├── receipt.py    ← /analyze-receipt endpoint
+│   │   ├── batch_route.py      ← /batch-predict endpoint
+│   │   └── chatbot_route.py    ← /chatbot endpoint
+│   │
+│   └── utils/
+│       ├── __init__.py
+│       ├── model_loader.py     ← XGBoost model + feature loader
+│       ├── explainer.py        ← Groq transaction explainer
+│       ├── groq_explainer.py   ← Groq receipt explainer
+│       ├── gemini_analyzer.py  ← Gemini Vision OCR
+│       ├── rule_engine.py      ← Relative fraud scoring rules
+│       └── chatbot.py          ← Chatbot Groq integration
+│
+├── models/
+│   ├── fraud_detection_model.pkl  ← Trained XGBoost model
+│   └── feature_columns.json       ← Feature column order
+│
+├── notebooks/
+│   └── PaySimFraudDetection.ipynb ← Training & EDA notebook
+│
+├── templates/
+│   └── index.html              ← Single page application
+│
+├── static/
+│   ├── css/
+│   │   └── style.css           ← All styles
+│   └── js/
+│       ├── script.js           ← Transaction form logic
+│       ├── receipt.js          ← Receipt upload logic
+│       ├── batch.js            ← Batch CSV logic
+│       └── chatbot.js          ← Chatbot logic
+│
+├── .env                        ← API keys (never commit)
+├── .gitignore
+├── requirements.txt
+```
+
+---
+
+
