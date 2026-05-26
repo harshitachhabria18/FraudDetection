@@ -7,7 +7,6 @@
 [![XGBoost](https://img.shields.io/badge/XGBoost-2.0-FF6600?style=for-the-badge)](https://xgboost.readthedocs.io)
 [![Groq](https://img.shields.io/badge/Groq-LLaMA_3.3-F55036?style=for-the-badge)](https://groq.com)
 [![Gemini](https://img.shields.io/badge/Gemini-Vision-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev)
-[![Render](https://img.shields.io/badge/Deployed_on-Render-46E3B7?style=for-the-badge)](https://render.com)
 
 **AI-powered platform to detect risk of potentially fraudulent financial transactions**
 
