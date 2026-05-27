@@ -228,3 +228,6 @@ Open browser → `http://127.0.0.1:5000`
 ### Fraud Detection & Receipt Analysis
 ![Fraud and Receipt](screenshots/fraudandreceipt.png)
 
+## 🎥 Demo Video
+https://github.com/user-attachments/assets/5c5ec4b7-7734-4596-b6a7-38c16bce316e
+
