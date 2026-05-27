@@ -229,7 +229,7 @@ Open browser → `http://127.0.0.1:5000`
 ![Fraud and Receipt](screenshots/fraudandreceipt.png)
 
 ## 🎥 Demo Video
-https://github.com/user-attachments/assets/5c5ec4b7-7734-4596-b6a7-38c16bce316e
+https://github.com/user-attachments/assets/8f79508b-fc4c-4131-bfa4-a4ca06d0a993
 
 ---
 
