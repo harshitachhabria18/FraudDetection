@@ -169,4 +169,53 @@ AI-RiskRadar/
 
 ---
 
+## 🚀 Installation
+### Prerequisites
+- Python 3.12+
+- pip
+- Git
+
+### Step 1 — Clone Repository
+```bash
+git clone https://github.com/harshitachhabria18/FraudDetection.git
+cd FraudDetection
+```
+
+### Step 2 — Create Virtual Environment
+```bash
+# Windows
+python -m venv venv
+venv\Scripts\activate
+
+# Mac / Linux
+python -m venv venv
+source venv/bin/activate
+```
+
+### Step 3 — Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### Step 4 — Set Up Environment Variables
+Create a `.env` file in the root directory:
+```env
+GROQ_API_KEY=your_groq_api_key_here
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+> ⚠️ Never commit your `.env` file. It is already included in `.gitignore`.
+
+Get API keys:
+- Groq → [console.groq.com](https://console.groq.com)
+- Gemini → [aistudio.google.com](https://aistudio.google.com)
+
+### Step 5 — Run Application
+```bash
+python -m backend.app
+```
+
+Open browser → `http://127.0.0.1:5000`
+
+---
+
 
