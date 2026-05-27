@@ -46,7 +46,7 @@ Financial fraud costs Indian consumers thousands of crores every year. Most frau
 |---|---|
 | Python 3.12 | Core programming language |
 | Flask | Backend web framework |
-| Gunicorn | Production WSGI server 
+| Gunicorn | Production WSGI server |
 | Pandas | Data processing and analysis |
 | NumPy | Numerical computations |
 
@@ -230,4 +230,33 @@ Open browser → `http://127.0.0.1:5000`
 
 ## 🎥 Demo Video
 https://github.com/user-attachments/assets/5c5ec4b7-7734-4596-b6a7-38c16bce316e
+
+---
+
+## ⚠️ Limitations
+- **Synthetic Dataset** — The model is trained on the PaySim dataset, which simulates mobile money transactions rather than using real banking data. Real-world fraud patterns are significantly more diverse and complex.
+
+- **Limited Fraud Scenarios** — PaySim primarily represents fraud involving account draining through `TRANSFER` and `CASH_OUT` transactions. Other fraud types such as phishing, social engineering, card fraud, or velocity attacks are not included in training.
+
+- **Hybrid Detection Approach** — Due to dataset limitations, the platform combines machine learning with rule-based fraud analysis for better practical detection and explainability.
+
+- **Receipt OCR Dependency** — Receipt analysis accuracy depends on image quality. Blurry, cropped, or low-resolution screenshots may lead to incomplete or incorrect extraction results.
+
+- **No Real Banking Integration** — The system analyzes manually entered transactions and does not connect directly to banking systems, transaction histories, GPS/device fingerprints, or user behavioral data.
+
+---
+
+## 🔮 Future Improvements
+- Add user authentication and personal transaction history
+- Build an advanced analytics dashboard with fraud trends and visualizations
+- Implement real-time transaction monitoring and alert system
+- Develop a mobile application for receipt scanning and fraud alerts
+- Retrain models on larger and more diverse fraud datasets
+- Integrate PostgreSQL for transaction storage and audit logs
+
+---
+
+## 👨‍💻 Author
+**Harshita Chhabria**
+
 
