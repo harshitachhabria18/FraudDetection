@@ -46,11 +46,9 @@ Financial fraud costs Indian consumers thousands of crores every year. Most frau
 |---|---|
 | Python 3.12 | Core programming language |
 | Flask | Backend web framework |
-| Flask-CORS | Cross-origin resource sharing |
-| Gunicorn | Production WSGI server |
+| Gunicorn | Production WSGI server 
 | Pandas | Data processing and analysis |
 | NumPy | Numerical computations |
-| python-dotenv | Environment variable management |
 
 ### Machine Learning
 | Technology | Purpose |
