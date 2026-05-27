@@ -218,6 +218,13 @@ Open browser → `http://127.0.0.1:5000`
 
 ---
 
+## 📸 Screenshots
+### Dashboard Overview
+![Dashboard](screenshots/home.png)
 
+### Transaction Analysis Form
+![Transaction Form](screenshots/enteredamount.png)
 
+### Fraud Detection & Receipt Analysis
+![Fraud and Receipt](screenshots/fraudandreceipt.png)
 
