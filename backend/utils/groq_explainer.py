@@ -105,19 +105,33 @@ Structure your response exactly like this:
             temperature = 0.3   # Low temperature = consistent, factual
         )
 
-        return response.choices[0].message.content.strip()
+        print(f"Groq raw response: {response}")
+        print(f"Finish reason: {response.choices[0].finish_reason}")
+        content = response.choices[0].message.content
+        print(f"Groq content: {repr(content)}")
+
+        if content and content.strip():
+            return content.strip()
+
+        # Model returned empty — treat like an error and use fallback
+        print("Groq returned empty content — using fallback")
+        raise ValueError("Empty response from Groq model")
 
     except Exception as e:
+        import traceback
         print(f"Groq Error: {e}")
+        traceback.print_exc()
 
         # Fallback: return a plain explanation without Groq
+        reasons = (
+            "\n".join(f"• {s.split('(')[0].strip()}" for s in signals)
+            if signals else "• No issues found."
+        )
         fallback = (
             f"🔍 Receipt Summary: Receipt from {vendor} "
             f"for ₹{amount} on {date} via {platform}.\n\n"
             f"⚠️ Risk Assessment: {verdict.replace('_', ' ')} "
             f"({score}/100)\n\n"
-            f"📋 Reasons:\n" +
-            "\n".join(f"• {s.split('(')[0].strip()}" for s in signals)
-            if signals else "• No issues found."
+            f"📋 Reasons:\n{reasons}"
         )
         return fallback

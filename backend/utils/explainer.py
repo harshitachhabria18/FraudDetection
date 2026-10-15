@@ -52,7 +52,7 @@ def explain_prediction(
         4. Keep language simple and friendly
         5. Do not use technical ML terms
         6. Write as if explaining to a bank customer
-        7. Keep response under 100 words
+        7. Keep response under 150 words
         """
 
         # Call Groq API
@@ -65,7 +65,7 @@ def explain_prediction(
             ],
             model      = 'openai/gpt-oss-20b',
             temperature= 0.3,
-            max_tokens = 200
+            max_tokens = 400
         )
 
         # Extract response

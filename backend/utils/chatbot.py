@@ -33,6 +33,7 @@ Keep answers:
 - professional
 - beginner friendly
 - concise
+- plain text only, NO markdown, NO bullet symbols like *, NO tables, NO bold (**), NO headers (#)
 """
 
 
@@ -55,7 +56,7 @@ def ask_chatbot(user_question):
             ],
 
             temperature=0.3,
-            max_tokens=300
+            max_tokens=500
         )
 
         reply = completion.choices[0].message.content
